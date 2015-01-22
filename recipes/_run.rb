@@ -7,18 +7,16 @@
 # All rights reserved - Do Not Redistribute
 #
 
-
+# Check that docker is installed
 include_recipe "docker"
+
+# Checks that the image is loaded
 include_recipe "docker-manage::_load"
+
+# Load attributes for container configuration
 image_name = "#{node['docker-manage']['image']['name']}"
 image_tag = "#{node['docker-manage']['image']['tag']}"
-
-# Load the image
-#docker_image "#{image_name}" do
-#  input "#{image_dir}/#{image_name}.tar"
-#  action :load
-##  only_if { File.exists?(aspnet_regiis) }
-#end
+container_ports = "#{node['docker-manage']['container']['ports']}"
 
 # Run the redis container exposing ports
 docker_container "#{image_name}" do
@@ -26,7 +24,7 @@ docker_container "#{image_name}" do
   tag "#{image_tag}"
   detach true
   hostname "#{image_name}.#{node['hostname']}"
-  port '6379:6379'
+  port "#{container_ports}"
   action :run
   not_if "docker start #{image_name}"
 end
