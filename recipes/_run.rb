@@ -16,7 +16,7 @@ include_recipe "docker-manage::_load"
 # Load attributes for container configuration
 image_name = "#{node['docker-manage']['image']['name']}"
 image_tag = "#{node['docker-manage']['image']['tag']}"
-container_ports = "#{node['docker-manage']['container']['ports']}"
+container_ports = node['docker-manage']['container']['ports']
 
 # Run the redis container exposing ports
 docker_container "#{image_name}" do
@@ -24,7 +24,7 @@ docker_container "#{image_name}" do
   tag "#{image_tag}"
   detach true
   hostname "#{image_name}.#{node['hostname']}"
-  port "#{container_ports}"
+  port container_ports
   action :run
   not_if "docker start #{image_name}"
 end
