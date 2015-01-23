@@ -44,7 +44,6 @@ end
 #  repository 'git@github.com:bflad/docker-testcontainerd.git'
 #  notifies :build, 'docker_image[bflad/testcontainerd]', :immediately
 #end
-
 #docker_image "#{image_name}" do
 #  tag "#{image_tag}"
 #  action :pull_if_missing
@@ -57,13 +56,6 @@ docker_image "#{image_name}" do
   source "#{build_dir}"
   action :build_if_missing
 end
-
-#docker_image 'myImage' do
-#  source 'example.com/foo/myImage'
-#  tag 'docker-manage'
-#  action :pull_if_missing
-#end
-
 
 docker_image "#{image_name}" do
   destination "#{image_dir}/#{image_name}.tar"
