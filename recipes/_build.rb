@@ -55,6 +55,7 @@ end
 docker_image "#{image_name}" do
   tag "#{image_tag}"
   source "#{build_dir}"
+  cmd_timeout 900
   action :build_if_missing
 end
 

@@ -9,6 +9,8 @@ Vagrant.configure('2') do |config|
   # option to your ~/.vagrant.d/Vagrantfile file
   config.berkshelf.enabled = true
 
+  config.berkshelf.berksfile_path = "Berksfile"  
+
   # Every Vagrant virtual environment requires a box to build off of.
   #config.vm.box = 'opscode-ubuntu-12.04'
   config.vm.box = 'opscode-centos-6.6'
