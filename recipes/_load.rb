@@ -13,6 +13,15 @@ image_tag = "#{node['docker-manage']['image']['tag']}"
 image_source = "#{node['docker-manage']['image']['source']}"
 image_checksum = "#{node['docker-manage']['image']['checksum']}"
 
+# Create a folder to store the image
+directory image_dir do
+  owner 'root'
+  group 'root'
+  mode '0755'
+  action :create
+  recursive true
+  not_if { Dir.exist? ("#{image_dir}") }
+end
 
 # Get the image.tar from a remote or local source:
 remote_file "#{image_dir}/#{image_name}.tar" do
