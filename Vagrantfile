@@ -32,19 +32,28 @@ Vagrant.configure('2') do |config|
     guest.vm.network :private_network, ip: '10.0.0.10'
     guest.vm.provision :chef_solo do |chef|
       chef.json = {
-#        "gitlab" => {
-#          "url" => "http://172.16.38.12",
-#	  "database_adapter" => "mysql"
-#        },
-#	"mysql" => {
-#	  "server_root_password" => "password",
-#	  "server_repl_password" => "password",
-#	}
-#        "postgresql" => {
-#	  "password" => {
-#	  "postgres" => "psqlpass"
-#	  }
-#	}
+        "docker-manage" => {
+	  "build" => {
+		"dir" => "/etc/docker/docker-manage/build"
+		},
+          "image" => {
+		"dir" => "/etc/docker/docker-manage/images",
+		"repository" => "https://github.com/epierotto/docker-rabbitmq.git",
+		"name" => "rabbitmq",
+		"tag" => "latest",
+		"source" => "file:///etc/docker/docker-manage/images/rabbitmq.tar",
+		"checksum" => "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
+        	},
+	  "container" => {
+	  	"ports" => ['5671:5671','5672:5672','15672:15672'],
+		# 		local dir  =>  container dir
+		"volumes" => {  
+				#"/data/log" => "/data/log",
+				#"/data/mnesia" => "/data/mnesia",
+				#"/etc/rabbitmq" => "/etc/rabbitmq"
+              			}
+	  	}
+	}
       }
       chef.run_list = [
         "recipe[docker-manage]"

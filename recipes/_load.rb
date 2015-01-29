@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-image_dir = "#{node['docker-manage']['dir']['images']}"
+image_dir = "#{node['docker-manage']['image']['dir']}"
 image_name = "#{node['docker-manage']['image']['name']}"
 image_tag = "#{node['docker-manage']['image']['tag']}"
 image_source = "#{node['docker-manage']['image']['source']}"
