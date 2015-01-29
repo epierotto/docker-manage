@@ -47,7 +47,7 @@ docker_image "#{image_name}" do
   source "#{build_dir}"
   cmd_timeout build_timeout
   action :build_if_missing
-  notifies :save, "docker_image[#{image_name}]", :immediately
+  notifies :save, "docker_image[#{image_name}]"
 end
 
 docker_image "#{image_name}" do
