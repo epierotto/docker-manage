@@ -7,14 +7,24 @@
 # All rights reserved - Do Not Redistribute
 #
 
-# Remove the redis container
+image_name = "#{node['docker-manage']['image']['name']}"
 
-docker_container 'redis' do
-  action :stop
+# Remove the container and image after stopping it
+
+str = "*" * 50
+Chef::Log.info("\n#{str}\n*\n* WARNING!!\n* REMOVING \"#{image_name}\" CONTAINER.\n*\n#{str}")
+
+
+docker_container "#{image_name}" do
+  force true
+  action :remove
+  only_if "docker stop #{image_name}"
+  notifies :remove, "docker_image[#{image_name}]", :immediately
 end
 
 
-docker_image 'redis' do
+docker_image "#{image_name}" do
   force true
-  action :remove
+  action :nothing
+  no_prune false
 end

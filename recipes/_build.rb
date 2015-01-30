@@ -42,11 +42,17 @@ docker_image "#{image_name}" do
   source "#{build_dir}"
   cmd_timeout build_timeout
   action :build_if_missing
-  notifies :save, "docker_image[#{image_name}]", :immediately
+#  notifies :save, "docker_image[#{image_name}]"
+end
+
+if File.exist? ("#{image_dir}/#{image_name}.tar")
+  str = "*" * 100
+  Chef::Log.warn("\n#{str}\n*\n* WARNING!!\n* NOT SAVING \"#{image_name}.tar\" DUE TO \"#{image_dir}/#{image_name}.tar\" ALREADY EXIST.\n*\n#{str}")
 end
 
 docker_image "#{image_name}" do
   destination "#{image_dir}/#{image_name}.tar"
   tag "#{image_tag}"
-  action :nothing
+  action :save
+  not_if { File.exist? ("#{image_dir}/#{image_name}.tar") }
 end

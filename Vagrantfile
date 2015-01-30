@@ -34,18 +34,19 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "docker-manage" => {
 	  "build" => {
-		"dir" => "/etc/docker/docker-manage/build"
+		"dir" => "/etc/docker/docker-manage/build/uchiwa"
 		},
           "image" => {
-		"dir" => "/etc/docker/docker-manage/images",
-		"repository" => "https://github.com/epierotto/docker-rabbitmq.git",
-		"name" => "rabbitmq",
+		"dir" => "/etc/docker/docker-manage/images/uchiwa",
+		"repository" => "https://github.com/epierotto/docker-uchiwa.git",
+		"name" => "uchiwa",
 		"tag" => "latest",
-		"source" => "file:///etc/docker/docker-manage/images/rabbitmq.tar",
+		"source" => "file:///etc/docker/docker-manage/images/uchiwa/uchiwa.tar",
 		"checksum" => "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
         	},
 	  "container" => {
-	  	"ports" => ['5671:5671','5672:5672','15672:15672'],
+	  	"ports" => ['3000:3000'],
+	  	"dns" => [],
 		# 		local dir  =>  container dir
 		"volumes" => {  
 				#"/data/log" => "/data/log",
@@ -56,7 +57,9 @@ Vagrant.configure('2') do |config|
 	}
       }
       chef.run_list = [
-        "recipe[docker-manage]"
+#        "recipe[docker-manage]"
+        "recipe[docker-manage::_run]"
+#        "recipe[docker-manage::_remove]"
         ]
     end
   end

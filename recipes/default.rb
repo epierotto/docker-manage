@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe "docker-manage::_build"
+#include_recipe "docker-manage::_build"
 
 include_recipe "docker-manage::_run"
 
