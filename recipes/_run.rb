@@ -16,6 +16,7 @@ include_recipe "docker-manage::_load"
 # Load attributes for container configuration
 image_name = "#{node['docker-manage']['image']['name']}"
 image_tag = "#{node['docker-manage']['image']['tag']}"
+container_dns = node['docker-manage']['container']['dns']
 container_ports = node['docker-manage']['container']['ports']
 dir_volumes = node['docker-manage']['container']['volumes']
 container_volumes = Array[]
@@ -41,6 +42,7 @@ docker_container "#{image_name}" do
   tag "#{image_tag}"
   detach true
   hostname "#{image_name}.#{node['hostname']}"
+  dns container_dns
   port container_ports
   volume container_volumes
   action :run

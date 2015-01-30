@@ -34,12 +34,7 @@ package "git"
 
 git "#{build_dir}" do
   repository "#{image_repository}"
-#  reference "master" 
-#  checkout_branch "master"
   action :checkout
-#  notifies :build, "docker_image[#{image_name}]", :immediately
-#   user "user"
-#   group "test"
 end
 
 docker_image "#{image_name}" do
@@ -47,7 +42,7 @@ docker_image "#{image_name}" do
   source "#{build_dir}"
   cmd_timeout build_timeout
   action :build_if_missing
-  notifies :save, "docker_image[#{image_name}]"
+  notifies :save, "docker_image[#{image_name}]", :immediately
 end
 
 docker_image "#{image_name}" do
