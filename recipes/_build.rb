@@ -18,6 +18,8 @@ image_tag = "#{node['docker-manage']['image']['tag']}"
 image_repository = "#{node['docker-manage']['image']['repository']}"
 dirs = ["#{build_dir}","#{image_dir}"]
 
+puts "#{build_dir}"
+
 # Create the folder to build and store the image
 dirs.each do |path|
   directory path do

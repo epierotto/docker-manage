@@ -1,0 +1,47 @@
+{
+  "name": "sensu-server",
+  "description": "Base install for a Docker Sensu server container.",
+  "json_class": "Chef::Role",
+  "default_attributes": {
+    "docker-manage": {
+      "build": { 
+        "dir": "/etc/docker/docker-manage/build/sensu-server",
+        "timeout": 900
+      },
+      "image": {
+        "dir": "/etc/docker/docker-manage/images/sensu-server",
+        "repository": "https://github.com/epierotto/docker-sensu-server.git",
+        "name": "sensu-server",
+        "tag": "latest",
+        "source": "file:///etc/docker/docker-manage/images/sensu-server/sensu-server.tar",
+        "checksum": "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
+      },
+      "container": { 
+        "dns": ["10.0.2.15","10.0.0.10"]
+      }
+    },
+    "consul-manage": {
+      "service": "sensu-server",
+#      "port": 80,
+      "tags": ['_docker._sensu._sensu_server']
+#      "check": {
+#        "interval": "10s",
+#        "script": "nc -zv #{node['consul-manage']['service']}.service.consul #{node['consul-manage']['port']}"
+#      }
+    }
+  },
+  "override_attributes": {
+#    "sensu": {
+#      "version": "0.12.6-4",
+#      "use_embedded_ruby": false
+#    }
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[docker-manage::_build]",
+    "recipe[docker-manage::_run]",
+    "recipe[consul-manage::_define]"
+  ],
+  "env_run_lists": {
+  }
+}

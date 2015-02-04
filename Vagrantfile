@@ -31,35 +31,23 @@ Vagrant.configure('2') do |config|
   config.vm.define :bootstrap, primary: true do |guest|
     guest.vm.network :private_network, ip: '10.0.0.10'
     guest.vm.provision :chef_solo do |chef|
+      chef.roles_path = 'test/roles/'
+#      chef.add_role "redis"
+#      chef.log_level = :debug
       chef.json = {
-        "docker-manage" => {
-	  "build" => {
-		"dir" => "/etc/docker/docker-manage/build/uchiwa"
-		},
-          "image" => {
-		"dir" => "/etc/docker/docker-manage/images/uchiwa",
-		"repository" => "https://github.com/epierotto/docker-uchiwa.git",
-		"name" => "uchiwa",
-		"tag" => "latest",
-		"source" => "file:///etc/docker/docker-manage/images/uchiwa/uchiwa.tar",
-		"checksum" => "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
-        	},
-	  "container" => {
-	  	"ports" => ['3000:3000'],
-	  	"dns" => [],
-		# 		local dir  =>  container dir
-		"volumes" => {  
-				#"/data/log" => "/data/log",
-				#"/data/mnesia" => "/data/mnesia",
-				#"/etc/rabbitmq" => "/etc/rabbitmq"
-              			}
-	  	}
+        "consul" => {
+          "serve_ui" => true
 	}
       }
       chef.run_list = [
-#        "recipe[docker-manage]"
-        "recipe[docker-manage::_run]"
-#        "recipe[docker-manage::_remove]"
+        "recipe[consul]",
+        "recipe[consul::ui]",
+        "recipe[consul::dns]",
+        "role[redis]",
+        "role[rabbitmq]"
+#        "recipe[docker-manage::_build]",
+#        "recipe[docker-manage::_run]",
+#        "recipe[consul-manage::_define]"
         ]
     end
   end

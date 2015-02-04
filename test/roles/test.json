@@ -1,0 +1,14 @@
+{
+        "name" : "s-sensu-client",
+        "description" : "The base role for Sensu client",
+        "chef_type" : "role",
+        "json_class" : "Chef::Role",
+        "default_attributes" : {
+                "monitor": {
+                        "master_address": "66.66.66.100"
+                }
+        },
+        "run_list" : [
+                "recipe[monitor::default]"
+        ]
+}

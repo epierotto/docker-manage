@@ -1,0 +1,44 @@
+{
+  "name": "rabbitmq",
+  "description": "Base install for a Docker RabbitMQ server container.",
+  "json_class": "Chef::Role",
+  "override_attributes": {
+    "docker-manage": {
+      "build": { 
+        "dir": "/etc/docker/docker-manage/build/rabbitmq",
+        "timeout": 900
+      },
+      "image": {
+        "dir": "/etc/docker/docker-manage/images/rabbitmq",
+        "repository": "https://github.com/epierotto/docker-rabbitmq.git",
+        "name": "rabbitmq",
+        "tag": "latest",
+        "source": "file:///etc/docker/docker-manage/images/rabbitmq/rabbitmq.tar",
+        "checksum": "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
+      },
+      "container": { 
+        "dns": ["10.0.2.15","10.0.0.10"],
+        "ports": ["5671:5671","5672:5672","15672:15672"]
+      }
+    },
+    "consul-manage": {
+      "service": "rabbitmq",
+      "port": 5672,
+      "tags": ["_docker._sensu._rabbitmq"],
+      "check": {
+        "interval": "10s",
+        "script": "nc -zv rabbitmq.service.consul 5672"
+      }
+    }
+  },
+  "default_attributes": {
+  },
+  "chef_type": "role",
+  "run_list": [
+    "recipe[docker-manage::_build]",
+    "recipe[docker-manage::_run]",
+    "recipe[consul-manage::_define]"
+  ],
+  "env_run_lists": {
+  }
+}
