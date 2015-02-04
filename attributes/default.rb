@@ -7,6 +7,9 @@
 # All rights reserved - Do Not Redistribute
 #
 
+
+default['docker-manage']['container']['names'] = ["redis","rabbitmq"]
+default['docker-manage']['container']['data_bag'] = "docker_containers"
 default['docker-manage']['build']['dir'] = "/etc/docker/docker-manage/build/rabbitmq"
 default['docker-manage']['build']['timeout'] = 900
 default['docker-manage']['image']['dir'] = "/etc/docker/docker-manage/images/rabbitmq"

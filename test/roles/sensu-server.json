@@ -2,7 +2,7 @@
   "name": "sensu-server",
   "description": "Base install for a Docker Sensu server container.",
   "json_class": "Chef::Role",
-  "default_attributes": {
+  "override_attributes": {
     "docker-manage": {
       "build": { 
         "dir": "/etc/docker/docker-manage/build/sensu-server",
@@ -22,19 +22,14 @@
     },
     "consul-manage": {
       "service": "sensu-server",
-#      "port": 80,
-      "tags": ['_docker._sensu._sensu_server']
-#      "check": {
-#        "interval": "10s",
-#        "script": "nc -zv #{node['consul-manage']['service']}.service.consul #{node['consul-manage']['port']}"
-#      }
+      "tags": ["_docker._sensu._sensu_server"],
+      "check": {
+        "interval": "10s",
+        "script": "docker top sensu-server | grep -o sensu"
+      }
     }
   },
-  "override_attributes": {
-#    "sensu": {
-#      "version": "0.12.6-4",
-#      "use_embedded_ruby": false
-#    }
+  "default_attributes": {
   },
   "chef_type": "role",
   "run_list": [

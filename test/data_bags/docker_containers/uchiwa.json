@@ -1,0 +1,20 @@
+{
+  "id": "uchiwa",
+  "build": {
+    "dir": "/etc/docker/docker-manage/build/uchiwa",
+    "timeout": 900
+  },
+  "image": {
+    "dir": "/etc/docker/docker-manage/images/uchiwa",
+    "repository": "https://github.com/epierotto/docker-uchiwa.git",
+    "name": "uchiwa",
+    "tag": "latest",
+    "source": "file:///etc/docker/docker-manage/images/uchiwa/uchiwa.tar",
+    "checksum": "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
+  },
+  "container": {
+    "dns": [ "10.0.2.15", "10.0.0.10" ],
+    "ports": ["3000:3000"],
+    "volumes": []
+  }
+}

@@ -31,7 +31,8 @@ Vagrant.configure('2') do |config|
   config.vm.define :bootstrap, primary: true do |guest|
     guest.vm.network :private_network, ip: '10.0.0.10'
     guest.vm.provision :chef_solo do |chef|
-      chef.roles_path = 'test/roles/'
+#      chef.roles_path = 'test/roles/'
+      chef.data_bags_path = "test/data_bags"
 #      chef.add_role "redis"
 #      chef.log_level = :debug
       chef.json = {
@@ -40,13 +41,14 @@ Vagrant.configure('2') do |config|
 	}
       }
       chef.run_list = [
-        "recipe[consul]",
-        "recipe[consul::ui]",
-        "recipe[consul::dns]",
-        "role[redis]",
-        "role[rabbitmq]"
-#        "recipe[docker-manage::_build]",
-#        "recipe[docker-manage::_run]",
+#        "recipe[consul]",
+#        "recipe[consul::ui]",
+#        "recipe[consul::dns]",
+ #       "role[redis]",
+ #       "role[rabbitmq]",
+ #       "role[sensu-server]"
+        "recipe[docker-manage::_build]",
+        "recipe[docker-manage::_run]"
 #        "recipe[consul-manage::_define]"
         ]
     end

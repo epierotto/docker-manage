@@ -2,7 +2,7 @@
   "name": "redis",
   "description": "Base install for a Docker Redis server container.",
   "json_class": "Chef::Role",
-  "default_attributes": {
+  "override_attributes": {
     "docker-manage": {
       "build": { 
         "dir": "/etc/docker/docker-manage/build/redis",
@@ -31,7 +31,7 @@
       }
     }
   },
-  "override_attributes": {
+  "default_attributes": {
   },
   "chef_type": "role",
   "run_list": [

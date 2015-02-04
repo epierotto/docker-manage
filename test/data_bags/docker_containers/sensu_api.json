@@ -1,0 +1,20 @@
+{
+  "id": "sensu_api",
+  "build": {
+    "dir": "/etc/docker/docker-manage/build/sensu_api",
+    "timeout": 900
+  },
+  "image": {
+    "dir": "/etc/docker/docker-manage/images/sensu_api",
+    "repository": "https://github.com/epierotto/docker-sensu-api.git",
+    "name": "sensu_api",
+    "tag": "latest",
+    "source": "file:///etc/docker/docker-manage/images/sensu_api/sensu_api.tar",
+    "checksum": "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
+  },
+  "container": {
+    "dns": [ "10.0.2.15", "10.0.0.10" ],
+    "ports": ["4567:4567"],
+    "volumes": []
+  }
+}
