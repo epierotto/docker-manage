@@ -38,18 +38,27 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "consul" => {
           "serve_ui" => true
-	}
+	},
+        "docker-manage" => {
+          "container" => {
+            "names" => ["redis","rabbitmq","sensu_server"],
+            "data_bag" => "docker_containers"
+          }	
+        },
+        "consul-manage" => {
+          "service" => {
+            "names" => ["redis","rabbitmq"],
+            "data_bag" => "consul_services"
+          }	
+        }
       }
       chef.run_list = [
-#        "recipe[consul]",
-#        "recipe[consul::ui]",
-#        "recipe[consul::dns]",
- #       "role[redis]",
- #       "role[rabbitmq]",
- #       "role[sensu-server]"
+        "recipe[consul]",
+        "recipe[consul::ui]",
+        "recipe[consul::dns]",
         "recipe[docker-manage::_build]",
-        "recipe[docker-manage::_run]"
-#        "recipe[consul-manage::_define]"
+        "recipe[docker-manage::_run]",
+        "recipe[consul-manage::_define]"
         ]
     end
   end

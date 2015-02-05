@@ -1,0 +1,10 @@
+{
+  "id": "redis",
+  "service": "redis",
+  "port": 6379,
+  "tags": ["_docker._sensu._redis"],
+  "check": {
+    "interval": "10s",
+    "script": "nc -zv 10.0.0.10 6379"
+  }
+}
