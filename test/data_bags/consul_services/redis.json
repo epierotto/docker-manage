@@ -5,6 +5,6 @@
   "tags": ["_docker._sensu._redis"],
   "check": {
     "interval": "10s",
-    "script": "nc -zv 10.0.0.10 6379"
+    "script": "nc -zv redis.service.consul 6379"
   }
 }

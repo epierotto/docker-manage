@@ -1,0 +1,10 @@
+{
+  "id": "uchiwa",
+  "service": "uchiwa",
+  "port": 3000,
+  "tags": ["_docker._sensu._uchiwa"],
+  "check": {
+    "interval": "10s",
+    "script": "nc -zv uchiwa.service.consul 3000"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "sensu_server",
+  "service": "sensu_server",
+  "port": 8500,
+  "tags": ["_docker._sensu._sensu_server"],
+  "check": {
+    "interval": "10s",
+    "script": "nc -zv consul.service.consul 8500"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "id": "sensu_api",
+  "service": "sensu_api",
+  "port": 4567,
+  "tags": ["_docker._sensu._sensu_api"],
+  "check": {
+    "interval": "10s",
+    "script": "nc -zv sensu_api.service.consul 4567"
+  }
+}

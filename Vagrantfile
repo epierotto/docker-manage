@@ -33,21 +33,20 @@ Vagrant.configure('2') do |config|
     guest.vm.provision :chef_solo do |chef|
 #      chef.roles_path = 'test/roles/'
       chef.data_bags_path = "test/data_bags"
-#      chef.add_role "redis"
-#      chef.log_level = :debug
+      chef.log_level = :info #:debug
       chef.json = {
         "consul" => {
           "serve_ui" => true
 	},
         "docker-manage" => {
           "container" => {
-            "names" => ["redis","rabbitmq","sensu_server"],
+            "names" => ["redis","rabbitmq","sensu_server","sensu_api","uchiwa"],
             "data_bag" => "docker_containers"
           }	
         },
         "consul-manage" => {
           "service" => {
-            "names" => ["redis","rabbitmq"],
+            "names" => ["redis","rabbitmq","sensu_server","sensu_api","uchiwa"],
             "data_bag" => "consul_services"
           }	
         }
