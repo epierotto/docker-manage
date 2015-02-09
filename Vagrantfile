@@ -52,12 +52,13 @@ Vagrant.configure('2') do |config|
         }
       }
       chef.run_list = [
+        "recipe[yum-epel]",
         "recipe[consul]",
         "recipe[consul::ui]",
         "recipe[consul::dns]",
+        "recipe[consul-manage::_define]",
         "recipe[docker-manage::_build]",
-        "recipe[docker-manage::_run]",
-        "recipe[consul-manage::_define]"
+        "recipe[docker-manage::_run]"
         ]
     end
   end

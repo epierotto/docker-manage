@@ -50,7 +50,7 @@ docker_containers.each do |container|
     source "#{build_dir}"
     cmd_timeout build_timeout
     action :build_if_missing
-    not_if { File.exist? ("#{image_dir}/#{image_name}.tar") }
+  #  notifies :save, "docker_image[#{image_name}]"
   end
   
   if File.exist? ("#{image_dir}/#{image_name}.tar")
@@ -62,14 +62,8 @@ docker_containers.each do |container|
     destination "#{image_dir}/#{image_name}.tar"
     tag "#{image_tag}"
     action :save
-    notifies :run, "execute[remove-image]", :immediately
+#    notifies :run, "execute[remove-image]", :immediately
     not_if { File.exist? ("#{image_dir}/#{image_name}.tar") }
-  end
-  
-  execute 'remove-image' do
-    command "docker rm #{image_name}"
-    action :nothing
-    only_if "docker stop #{image_name}"
   end
 
 end
