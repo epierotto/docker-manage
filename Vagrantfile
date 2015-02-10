@@ -10,45 +10,145 @@ Vagrant.configure('2') do |config|
   config.berkshelf.enabled = true
 
   config.berkshelf.berksfile_path = "Berksfile"  
+ 
 
-  # Every Vagrant virtual environment requires a box to build off of.
-  #config.vm.box = 'opscode-ubuntu-12.04'
-  config.vm.box = 'opscode-centos-6.6'
-  
-  config.vm.hostname = "dockermanage"
-  
-  # Give it some power...
-  config.vm.provider :virtualbox do |vb|
+  #### Docker1 definition 
+  config.vm.define :docker1 do |docker1|
+    docker1.vm.box = 'opscode-centos-6.6'
+    docker1.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box"
+    docker1.vm.network :private_network, ip: '10.0.0.10'
+    docker1.vm.hostname = 'docker1'
+    config.vm.provider :virtualbox do |vb|
       vb.customize ['modifyvm', :id,
                         '--cpus', '2',
                         '--memory', '1024',]
-  end
-  # The url from where the 'config.vm.box' box will be fetched if it
-  # doesn't already exist on the user's system.
-  #config.vm.box_url = "https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_ubuntu-12.04_provisionerless.box"
-  config.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box"
-
-  config.vm.define :bootstrap, primary: true do |guest|
-    guest.vm.network :private_network, ip: '10.0.0.10'
-    guest.vm.provision :chef_solo do |chef|
-#      chef.roles_path = 'test/roles/'
+        end
+    
+    docker1.vm.provision :chef_solo do |chef|
       chef.data_bags_path = "test/data_bags"
       chef.log_level = :info #:debug
       chef.json = {
         "consul" => {
-          "serve_ui" => true
-	},
+          "serve_ui" => true,
+          "retry_on_join" => false,
+          "bootstrap_expect" => 3,
+          "retry_on_join" => true,
+          "bind_interface" => "eth1",
+          "advertise_addr" => "10.0.0.10",
+          "service_mode" => "server",
+          "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
+        },
         "docker-manage" => {
           "container" => {
-            "names" => ["redis","rabbitmq","sensu_server","sensu_api","uchiwa"],
+            "names" => ["rabbitmq1"],
             "data_bag" => "docker_containers"
-          }	
+          }
         },
         "consul-manage" => {
           "service" => {
-            "names" => ["redis","rabbitmq","sensu_server","sensu_api","uchiwa"],
+            "names" => ["rabbitmq","rabbitmq1"],
             "data_bag" => "consul_services"
-          }	
+          }
+        }
+      }
+      chef.run_list = [
+        "recipe[yum-epel]",
+        "recipe[consul]",
+        "recipe[consul::ui]",
+        "recipe[consul::dns]",
+        "recipe[consul-manage::_define]",
+        "recipe[docker-manage::_build]",
+        "recipe[docker-manage::_run]"
+        ]
+    end
+  end
+
+  #### Docker2 definition
+  config.vm.define :docker2 do |docker2|
+    docker2.vm.box = 'opscode-centos-6.6'
+    docker2.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box"
+    docker2.vm.network :private_network, ip: '10.0.0.11'
+    docker2.vm.hostname = 'docker2'
+    config.vm.provider :virtualbox do |vb|
+      vb.customize ['modifyvm', :id,
+                        '--cpus', '2',
+                        '--memory', '1024',]
+        end
+    docker2.vm.provision :chef_solo do |chef|
+      chef.data_bags_path = "test/data_bags"
+      chef.log_level = :info #:debug
+      chef.json = {
+        "consul" => {
+          "serve_ui" => true,
+          "retry_on_join" => false,
+          "bind_interface" => "eth1",
+          "bootstrap_expect" => 3,
+          "retry_on_join" => true,
+          "advertise_addr" => "10.0.0.11",
+          "service_mode" => "cluster",
+          "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
+        },
+        "docker-manage" => {
+          "container" => {
+            "names" => ["rabbitmq2"],
+            "data_bag" => "docker_containers"
+          }
+        },
+        "consul-manage" => {
+          "service" => {
+            "names" => ["rabbitmq","rabbitmq2"],
+            "data_bag" => "consul_services"
+          }
+        }
+      }
+      chef.run_list = [
+        "recipe[yum-epel]",
+        "recipe[consul]",
+        "recipe[consul::ui]",
+        "recipe[consul::dns]",
+        "recipe[consul-manage::_define]",
+        "recipe[docker-manage::_build]",
+        "recipe[docker-manage::_run]"
+        ]
+    end
+  end
+
+  #### Docker3 definition
+  config.vm.define :docker3 do |docker3|
+    docker3.vm.box = 'opscode-centos-6.6'
+    docker3.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box"
+    docker3.vm.network :private_network, ip: '10.0.0.12'
+    docker3.vm.hostname = 'docker3'
+    config.vm.provider :virtualbox do |vb|
+      vb.customize ['modifyvm', :id,
+                        '--cpus', '2',
+                        '--memory', '1024',]
+        end
+    docker3.vm.provision :chef_solo do |chef|
+      chef.data_bags_path = "test/data_bags"
+      chef.log_level = :info #:debug
+      chef.json = {
+        "consul" => {
+          "serve_ui" => true,
+          "retry_on_join" => false,
+          "bind_interface" => "eth1",
+          "bootstrap_expect" => 3,
+          "retry_on_join" => true,
+          "advertise_addr" => "10.0.0.12",
+          "service_mode" => "cluster",
+          "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
+        },
+        "docker-manage" => {
+          "container" => {
+            "names" => ["rabbitmq3"],
+            "data_bag" => "docker_containers"
+          }
+        },
+        "consul-manage" => {
+          "service" => {
+            "names" => ["rabbitmq","rabbitmq3"],
+            "data_bag" => "consul_services"
+          }
         }
       }
       chef.run_list = [

@@ -24,7 +24,9 @@ docker_containers.each do |container|
   # Load attributes for container configuration
   image_name = "#{docker['image']['name']}"
   image_tag = "#{docker['image']['tag']}"
+  container_name = "#{docker['container']['name']}"
   container_dns = docker['container']['dns']
+  container_env = docker['container']['env']
   container_ports = docker['container']['ports']
   dir_volumes = docker['container']['volumes']
   container_volumes = Array[]
@@ -49,8 +51,9 @@ docker_containers.each do |container|
     image "#{image_name}"
     tag "#{image_tag}"
     detach true
-    hostname "#{image_name}.#{node['hostname']}"
+    hostname "#{container_name}"
     dns container_dns
+    env container_env
     port container_ports
     volume container_volumes
     action :run

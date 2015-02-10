@@ -1,5 +1,5 @@
 {
-  "id": "rabbitmq",
+  "id": "rabbitmq1",
   "build": {
     "dir": "/etc/docker/docker-manage/build/rabbitmq",
     "timeout": 900
@@ -7,13 +7,13 @@
   "image": {
     "dir": "/etc/docker/docker-manage/images/rabbitmq",
     "repository": "https://github.com/epierotto/docker-rabbitmq.git",
-    "name": "rabbitmq2",
+    "name": "rabbitmq1",
     "tag": "latest",
     "source": "file:///etc/docker/docker-manage/images/rabbitmq/rabbitmq.tar",
     "checksum": "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
   },
   "container": {
-    "name": "rabbitmq2.service.consul",
+    "name": "rabbitmq1.service.consul",
     "dns": [ "10.0.2.15", "10.0.0.10", "10.0.0.11", "10.0.0.12" ],
     "env": [],
     "ports": ["4369:4369","5671:5671","5672:5672","15672:15672","44001:44001"],

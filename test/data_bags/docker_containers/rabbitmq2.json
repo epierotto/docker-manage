@@ -1,5 +1,5 @@
 {
-  "id": "rabbitmq",
+  "id": "rabbitmq2",
   "build": {
     "dir": "/etc/docker/docker-manage/build/rabbitmq",
     "timeout": 900

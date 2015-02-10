@@ -1,0 +1,10 @@
+{
+  "id": "rabbitmq2",
+  "service": "rabbitmq2",
+  "port": 5671,
+  "tags": ["_docker._sensu._rabbitmq2"],
+  "check": {
+    "interval": "10s",
+    "script": "nc -zv 10.0.0.11 5671"
+  }
+}
