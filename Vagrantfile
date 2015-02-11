@@ -38,6 +38,9 @@ Vagrant.configure('2') do |config|
           "service_mode" => "server",
           "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
         },
+        "docker" => {
+          "version" => '1.4.1-3.el6'
+        },
         "docker-manage" => {
           "container" => {
             "names" => ["rabbitmq1"],
@@ -88,6 +91,9 @@ Vagrant.configure('2') do |config|
           "service_mode" => "cluster",
           "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
         },
+        "docker" => {
+          "version" => '1.4.1-3.el6'
+        },
         "docker-manage" => {
           "container" => {
             "names" => ["rabbitmq2"],
@@ -137,6 +143,9 @@ Vagrant.configure('2') do |config|
           "advertise_addr" => "10.0.0.12",
           "service_mode" => "cluster",
           "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
+        },
+        "docker" => {
+          "version" => '1.4.1-3.el6'
         },
         "docker-manage" => {
           "container" => {
