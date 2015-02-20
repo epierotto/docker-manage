@@ -1,5 +1,5 @@
 #! /usr/bin/perl -w
-
+# yum install -y perl-JSON.noarch perl-Redis.noarch perl-MIME-Types.noarch perl-libwww-perl.noarch
 use LWP::UserAgent;
 use Redis;
 use JSON;
@@ -116,7 +116,7 @@ sub PUT{
 sub GetRedisInfo{
 	my ($host,$port) = @_;
 	my $r;
-	my %info = ('FAIL'=>"FALSE");
+	my %info;
 	eval {$r = Redis->new( server => "$host:$port", debug => 0 )};
 	if ($@){
 		$info{'FAIL'} = "TRUE";
@@ -124,6 +124,7 @@ sub GetRedisInfo{
 	else{
 		$r->connect;
 		%info = %{$r->info('Replication')};
+		$info{'FAIL'} = "FALSE";
 		$r->quit;
 	}
 	print "REDIS INFO:",Dumper (\%info) if ($opts{'debug'});
@@ -244,7 +245,7 @@ sub GetNodeSessions{
 
 sub DestroySession{
 	my ($hostname,$session_id) = @_;
-	my $session_destroy = GET("http://$hostname:8500/v1/session/destroy/$session_id");
+	my $session_destroy = PUT("http://$hostname:8500/v1/session/destroy/$session_id","");
 	print "SESSION DESTROYED:",Dumper (\$session_destroy) if ($opts{'debug'});
 	return $session_destroy;
 }
@@ -292,7 +293,10 @@ if ($redis_info{'FAIL'} eq "TRUE"){
 		
 		# Release the session if you are the master redis
 		ReleaseSession($opts{'hostname'},$opts{'service'},$session{'Session'}) if ("$opts{'hostname'}" eq "$master_kv");
-		
+
+		# Destroy unused session
+                DestroySession($opts{'hostname'},$session{'Session'}) if ("$opts{'hostname'}" eq "$master_kv");	
+
 		if ($node_services{"$opts{'service'}"}){
                         ServiceLocalDeregistation($opts{'hostname'},$opts{'service'});
                 }

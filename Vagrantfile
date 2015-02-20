@@ -30,11 +30,11 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "consul" => {
           "serve_ui" => true,
-#          "bootstrap_expect" => 1,
+          "bootstrap_expect" => 2,
           "retry_on_join" => true,
           "bind_interface" => "eth1",
           "advertise_addr" => "10.0.0.10",
-          "service_mode" => "server",
+          "service_mode" => "cluster",
           "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
         },
         "docker" => {
@@ -83,7 +83,7 @@ Vagrant.configure('2') do |config|
         "consul" => {
           "serve_ui" => true,
           "bind_interface" => "eth1",
-#          "bootstrap_expect" => 1,
+          "bootstrap_expect" => 2,
           "retry_on_join" => true,
           "advertise_addr" => "10.0.0.11",
           "service_mode" => "cluster",
@@ -135,7 +135,7 @@ Vagrant.configure('2') do |config|
         "consul" => {
           "serve_ui" => true,
           "bind_interface" => "eth1",
-#          "bootstrap_expect" => 1,
+          "bootstrap_expect" => 2,
           "retry_on_join" => true,
           "advertise_addr" => "10.0.0.12",
           "service_mode" => "cluster",
