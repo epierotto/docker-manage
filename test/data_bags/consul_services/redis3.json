@@ -1,0 +1,10 @@
+{
+  "id": "redis3",
+  "service": "redis3",
+  "port": 6379,
+  "tags": ["_docker._sensu._redis"],
+  "check": {
+    "interval": "5s",
+    "script": "/home/vagrant/redis-cluster.pl -h 10.0.0.12 -p 6379 -s redis"
+  }
+}

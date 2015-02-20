@@ -30,7 +30,8 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "consul" => {
           "serve_ui" => true,
-#          "bootstrap_expect" => 1,
+          "retry_on_join" => false,
+          "bootstrap_expect" => 3,
           "retry_on_join" => true,
           "bind_interface" => "eth1",
           "advertise_addr" => "10.0.0.10",
@@ -42,13 +43,13 @@ Vagrant.configure('2') do |config|
         },
         "docker-manage" => {
           "container" => {
-            "names" => ["redis"],
+            "names" => ["rabbitmq1"],
             "data_bag" => "docker_containers"
           }
         },
         "consul-manage" => {
           "service" => {
-            "names" => ["redis1"],
+            "names" => ["rabbitmq","rabbitmq1"],
             "data_bag" => "consul_services"
           }
         }
@@ -82,8 +83,9 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "consul" => {
           "serve_ui" => true,
+          "retry_on_join" => false,
           "bind_interface" => "eth1",
-#          "bootstrap_expect" => 1,
+          "bootstrap_expect" => 3,
           "retry_on_join" => true,
           "advertise_addr" => "10.0.0.11",
           "service_mode" => "cluster",
@@ -94,13 +96,13 @@ Vagrant.configure('2') do |config|
         },
         "docker-manage" => {
           "container" => {
-            "names" => ["redis"],
+            "names" => ["rabbitmq2"],
             "data_bag" => "docker_containers"
           }
         },
         "consul-manage" => {
           "service" => {
-            "names" => ["redis2"],
+            "names" => ["rabbitmq","rabbitmq2"],
             "data_bag" => "consul_services"
           }
         }
@@ -134,8 +136,9 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "consul" => {
           "serve_ui" => true,
+          "retry_on_join" => false,
           "bind_interface" => "eth1",
-#          "bootstrap_expect" => 1,
+          "bootstrap_expect" => 3,
           "retry_on_join" => true,
           "advertise_addr" => "10.0.0.12",
           "service_mode" => "cluster",
@@ -146,13 +149,13 @@ Vagrant.configure('2') do |config|
         },
         "docker-manage" => {
           "container" => {
-            "names" => ["redis"],
+            "names" => ["rabbitmq3"],
             "data_bag" => "docker_containers"
           }
         },
         "consul-manage" => {
           "service" => {
-            "names" => ["redis3"],
+            "names" => ["rabbitmq","rabbitmq3"],
             "data_bag" => "consul_services"
           }
         }
