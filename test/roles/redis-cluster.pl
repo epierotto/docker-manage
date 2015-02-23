@@ -1,5 +1,5 @@
 #! /usr/bin/perl -w
-# yum install -y perl-JSON.noarch perl-Redis.noarch perl-MIME-Types.noarch perl-libwww-perl.noarch
+
 use LWP::UserAgent;
 use Redis;
 use JSON;
@@ -129,6 +129,43 @@ sub GetRedisInfo{
 	}
 	print "REDIS INFO:",Dumper (\%info) if ($opts{'debug'});
 	return %info;
+
+}
+
+sub CheckRedis{
+	my %info = @_;
+	my $status = 0;
+	my @output;
+	if ("$info{'role'}" eq "master"){
+
+		push (@output, ("master","connected_slaves $info{'connected_slaves'}",));
+
+		for( my $i = 0; $i < $info{'connected_slaves'}; $i++) {
+			my @slaves = split(",",$info{"slave$i"});
+			my %hash;
+			foreach my $slave (@slaves){
+				my @s_info = split("=",$slave);
+				$hash{$s_info[0]} = "$s_info[1]"; 
+				print "HASH:",Dumper (\%hash) if ($opts{'debug'});
+
+			}	
+			$status = 1 if ($hash{'state'} ne 'online');	
+			push (@output, ("slave$i $hash{'ip'}:$hash{'port'} $hash{'state'}" ));
+	 	}
+
+	}
+	elsif ("$info{'role'}" eq "slave"){
+        	push (@output, ("slave_of $info{'master_host'}:$info{'master_port'}","link_status $info{'master_link_status'}","master_last_io_seconds_ago $info{'master_last_io_seconds_ago'}","slave_read_only $info{'slave_read_only'}","connected_slaves $info{'connected_slaves'}"));
+		
+		$status = 2 if ($info{'master_link_status'} ne "up");	
+
+	}
+	
+	print "STATUS= $status\nREDIS CHECK:",Dumper (\@output) if ($opts{'debug'});
+
+	my $out = join(', ', @output);
+
+	return ($status,$out);
 
 }
 
@@ -301,20 +338,12 @@ if ($redis_info{'FAIL'} eq "TRUE"){
                         ServiceLocalDeregistation($opts{'hostname'},$opts{'service'});
                 }
 	}
-	exit 1;
+	exit 3;
 }
 
 # Get the array of nodes running a given service
 my @service_nodes = GetServiceNodes($opts{'hostname'},$opts{'service'});
 
-#GetNodeSessions($opts{'hostname'},$node_name);
-
-#my $session_id = CreateSession($opts{'hostname'},$opts{'service'});
-
-# Try to lock the session and set the Key=Value with the master ip address
-#my $session_lock = AcquireSession($opts{'hostname'},$opts{'service'},$session_id,"$opts{'hostname'}");
-
-#SetRedisNoSlave("$opts{'hostname'}","$opts{'port'}");
 #exit 0;
 
 if ($session{'Session'}){
@@ -329,7 +358,7 @@ if ($session{'Session'}){
 			print "NOW SLAVE OF: $master_kv\n" if ($opts{'debug'});
 		}
 		else{
-			print "SLAVE OF: $master_kv\n"
+			print "SLAVE OF: $master_kv\n" if ($opts{'debug'});
 		}
 		
 		# Deregister the service if declared
@@ -337,7 +366,6 @@ if ($session{'Session'}){
 			ServiceLocalDeregistation($opts{'hostname'},$opts{'service'});
 		}
 		
-		# Delete unused sessions
 
 	
 	}
@@ -356,7 +384,13 @@ if ($session{'Session'}){
 			print "NOW SLAVE OF: $master_kv\n" if ($opts{'debug'});
 		}
 		else{
-			print "IM THE MASTER!!: $master_kv\n"
+			print "IM THE MASTER!!: $master_kv\n" if ($opts{'debug'});
+			
+			# Register the service if not defined
+			if (!$node_services{"$opts{'service'}"}){
+				ServiceRegistation($opts{'hostname'},$opts{'service'},$opts{'port'});
+                	}
+
 		}
 	}
 }
@@ -388,4 +422,10 @@ else{
 	}
 }
 
-exit 0;
+my %redis_inf = GetRedisInfo("$opts{'hostname'}","$opts{'port'}");
+
+my ($status,$output) = CheckRedis(%redis_inf);
+
+print "STATUS: $status\nCHECK: $output\n" if ($opts{'debug'});
+print "$output";
+exit $status;
