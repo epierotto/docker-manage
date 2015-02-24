@@ -1,5 +1,6 @@
 #! /usr/bin/perl -w
-
+# yum install -y perl-JSON.noarch perl-Redis.noarch perl-MIME-Types.noarch perl-libwww-perl.noarch
+#
 use LWP::UserAgent;
 use Redis;
 use JSON;
@@ -244,7 +245,8 @@ sub GetServiceNodes{
 
 sub ServiceRegistation{
 	my ($hostname,$service,$port) = @_;
-	my $json = "{\"Name\": \"$service\", \"Port\": $port, \"Check\": {\"Script\": \"nc -zv $service.service.consul $port\",\"Interval\": \"5s\"}}";
+	#my $json = "{\"Name\": \"$service\", \"Port\": $port, \"Check\": {\"Script\": \"/home/vagrant/redis-cluster.pl -h $hostname -p $port -s $service\",\"Interval\": \"5s\"}}";
+	my $json = "{\"Name\": \"$service\", \"Port\": $port}";
 	# Service Register
 	my $registration = PUT("http://$hostname:8500/v1/agent/service/register", "$json");
 	
@@ -335,10 +337,10 @@ if ($redis_info{'FAIL'} eq "TRUE"){
                 DestroySession($opts{'hostname'},$session{'Session'}) if ("$opts{'hostname'}" eq "$master_kv");	
 
 		if ($node_services{"$opts{'service'}"}){
-                        ServiceLocalDeregistation($opts{'hostname'},$opts{'service'});
+#                        ServiceLocalDeregistation($opts{'hostname'},$opts{'service'});
                 }
 	}
-	exit 3;
+	exit 2;
 }
 
 # Get the array of nodes running a given service

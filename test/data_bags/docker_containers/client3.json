@@ -1,0 +1,21 @@
+{
+  "id": "client3",
+  "build": {
+    "dir": "/etc/docker/docker-manage/build/client3",
+    "timeout": 900
+  },
+  "image": {
+    "dir": "/etc/docker/docker-manage/images/client3",
+    "repository": "https://github.com/epierotto/docker-sensu-client.git",
+    "name": "client3",
+    "tag": "latest",
+    "source": "file:///etc/docker/docker-manage/images/client3/client3.tar",
+    "checksum": "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
+  },
+  "container": {
+    "dns": [ "10.0.2.15", "10.0.0.13" ],
+    "env": [],
+    "ports": [],
+    "volumes": []
+  }
+}

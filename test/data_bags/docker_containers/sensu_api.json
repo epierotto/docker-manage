@@ -13,7 +13,7 @@
     "checksum": "d6091b2688edfc8561b54e1d9db22d2a466bc78fd1f40d702c86cef3b5ae1a71"
   },
   "container": {
-    "dns": [ "10.0.2.15", "10.0.0.10" ],
+    "dns": [ "10.0.0.10", "10.0.0.12" ],
     "env": [],
     "ports": ["4567:4567"],
     "volumes": []
