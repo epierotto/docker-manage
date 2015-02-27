@@ -1,0 +1,6 @@
+{
+  "id": "sensu_api",
+  "service_name": "sensu_api",
+  "passingonly": true,
+  "handler": "service sensu_api restart"
+}

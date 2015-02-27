@@ -5,6 +5,6 @@
   "tags": ["_docker._sensu._sensu_api"],
   "check": {
     "interval": "10s",
-    "script": "nc -zv sensu_api.service.consul 4567"
+    "script": "nc -zv localhost 4567"
   }
 }

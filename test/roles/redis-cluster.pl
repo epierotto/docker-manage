@@ -245,8 +245,8 @@ sub GetServiceNodes{
 
 sub ServiceRegistation{
 	my ($hostname,$service,$port) = @_;
-	#my $json = "{\"Name\": \"$service\", \"Port\": $port, \"Check\": {\"Script\": \"/home/vagrant/redis-cluster.pl -h $hostname -p $port -s $service\",\"Interval\": \"5s\"}}";
-	my $json = "{\"Name\": \"$service\", \"Port\": $port}";
+	my $json = "{\"Name\": \"$service\", \"Port\": $port, \"Check\": {\"Script\": \"nc -zv localhost $port\",\"Interval\": \"5s\"}}";
+	#my $json = "{\"Name\": \"$service\", \"Port\": $port}";
 	# Service Register
 	my $registration = PUT("http://$hostname:8500/v1/agent/service/register", "$json");
 	
@@ -365,7 +365,7 @@ if ($session{'Session'}){
 		
 		# Deregister the service if declared
 		if ($node_services{"$opts{'service'}"}){
-			ServiceLocalDeregistation($opts{'hostname'},$opts{'service'});
+#			ServiceLocalDeregistation($opts{'hostname'},$opts{'service'});
 		}
 		
 
@@ -380,7 +380,7 @@ if ($session{'Session'}){
 			
 			# Deregister the service if declared
 			if ($node_services{"$opts{'service'}"}){
-                        	ServiceLocalDeregistation($opts{'hostname'},$opts{'service'});
+#                        	ServiceLocalDeregistation($opts{'hostname'},$opts{'service'});
                 	}
 
 			print "NOW SLAVE OF: $master_kv\n" if ($opts{'debug'});
@@ -393,6 +393,10 @@ if ($session{'Session'}){
 				ServiceRegistation($opts{'hostname'},$opts{'service'},$opts{'port'});
                 	}
 
+			# Deregister the service from all the other nodes but the the local agent
+			foreach my $node (@service_nodes){
+				ServiceDeregistation($opts{'hostname'},$node,$opts{'service'}) unless ($node eq $node_name);
+			}
 		}
 	}
 }

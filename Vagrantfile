@@ -30,6 +30,7 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "consul" => {
           "serve_ui" => true,
+          "version" => "0.4.1",
           "bootstrap_expect" => 2,
           "retry_on_join" => true,
           "bind_interface" => "eth1",
@@ -50,6 +51,17 @@ Vagrant.configure('2') do |config|
           "service" => {
             "names" => ["redis1","rabbitmq","rabbitmq1","sensu_server","sensu_api","uchiwa"],
             "data_bag" => "consul_services"
+          },
+	  "watch" => {
+	    "service" => {
+                        "names" => ["sensu_api","sensu_server"],
+                        "data_bag" => "consul_watch_service"
+                }
+          },
+          "handlers" => {
+                "packages" => ["nc"],
+                "sources" => [],
+                "dir" => "/usr/local/consul/handlers/"
           }
         }
       }
@@ -57,8 +69,10 @@ Vagrant.configure('2') do |config|
         "recipe[yum-epel]",
         "recipe[consul]",
         "recipe[consul::ui]",
-        "recipe[consul::dns]",
+        "recipe[consul-manage::dns]",
+        "recipe[consul-manage::handlers]",
         "recipe[consul-manage::_define]",
+        "recipe[consul-manage::_watch]",
         "recipe[docker-manage::_build]",
         "recipe[docker-manage::_run]"
         ]
@@ -82,6 +96,7 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "consul" => {
           "serve_ui" => true,
+          "version" => "0.4.1",
           "bind_interface" => "eth1",
           "bootstrap_expect" => 2,
           "retry_on_join" => true,
@@ -102,6 +117,17 @@ Vagrant.configure('2') do |config|
           "service" => {
             "names" => ["redis2","rabbitmq","rabbitmq2","sensu_server","sensu_api","uchiwa"],
             "data_bag" => "consul_services"
+          },
+	  "watch" => {
+            "service" => {
+                        "names" => ["sensu_api","sensu_server"],
+                        "data_bag" => "consul_watch_service"
+                }
+          },
+          "handlers" => {
+                "packages" => ["nc"],
+                "sources" => [],
+                "dir" => "/usr/local/consul/handlers/"
           }
         }
       }
@@ -109,8 +135,10 @@ Vagrant.configure('2') do |config|
         "recipe[yum-epel]",
         "recipe[consul]",
         "recipe[consul::ui]",
-        "recipe[consul::dns]",
+        "recipe[consul-manage::dns]",
+        "recipe[consul-manage::handlers]",
         "recipe[consul-manage::_define]",
+        "recipe[consul-manage::_watch]",
         "recipe[docker-manage::_build]",
         "recipe[docker-manage::_run]"
         ]
@@ -134,6 +162,7 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "consul" => {
           "serve_ui" => true,
+          "version" => "0.4.1",
           "bind_interface" => "eth1",
           "bootstrap_expect" => 2,
           "retry_on_join" => true,
@@ -154,6 +183,17 @@ Vagrant.configure('2') do |config|
           "service" => {
             "names" => ["redis3","rabbitmq","rabbitmq3","sensu_server","sensu_api","uchiwa"],
             "data_bag" => "consul_services"
+          },
+	  "watch" => {
+            "service" => {
+                        "names" => ["sensu_api","sensu_server"],
+                        "data_bag" => "consul_watch_service"
+                }
+          },
+          "handlers" => {
+                "packages" => ["nc"],
+                "sources" => [],
+                "dir" => "/usr/local/consul/handlers/"
           }
         }
       }
@@ -161,8 +201,10 @@ Vagrant.configure('2') do |config|
         "recipe[yum-epel]",
         "recipe[consul]",
         "recipe[consul::ui]",
-        "recipe[consul::dns]",
+        "recipe[consul-manage::dns]",
+        "recipe[consul-manage::handlers]",
         "recipe[consul-manage::_define]",
+        "recipe[consul-manage::_watch]",
         "recipe[docker-manage::_build]",
         "recipe[docker-manage::_run]"
         ]
@@ -187,6 +229,7 @@ Vagrant.configure('2') do |config|
       chef.json = {
         "consul" => {
           "serve_ui" => true,
+          "version" => "0.4.1",
           "bind_interface" => "eth1",
           "bootstrap_expect" => 2,
           "retry_on_join" => true,
@@ -214,7 +257,8 @@ Vagrant.configure('2') do |config|
         "recipe[yum-epel]",
         "recipe[consul]",
         "recipe[consul::ui]",
-        "recipe[consul::dns]",
+        "recipe[consul-manage::dns]",
+#        "recipe[consul-manage::handlers]",
         "recipe[consul-manage::_define]",
         "recipe[docker-manage::_build]",
         "recipe[docker-manage::_run]"
