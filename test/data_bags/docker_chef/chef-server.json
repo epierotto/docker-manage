@@ -1,0 +1,15 @@
+{
+  "id": "chef-server",
+  "image_load": false, 
+  "image_name": "10.0.0.10:5000/chef-server", 
+  "image_conf": {
+    "tag": "kontinuity",
+    "cmd_timeout": 900
+  },
+  "container_name": "chef-server",
+  "container_conf": {
+    "privileged": true,
+    "port": ["443:443"],
+    "cmd_timeout": 120
+  }
+}

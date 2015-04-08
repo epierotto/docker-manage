@@ -1,0 +1,20 @@
+{
+  "id": "nginx",
+  "registry": "nginx", 
+  "registry_conf": {
+    "username": "",
+    "password": ""
+  },
+  "image_name": "nginx", 
+  "image_conf": {
+    "tag": "1.7",
+    "cmd_timeout": 600
+  },
+  "container_name": "nginx",
+  "container_conf": {
+    "dns": [ "10.0.2.15", "10.0.0.10" ],
+    "env": [],
+    "ports": [ "6379:6379" ],
+    "volumes": []
+  }
+}

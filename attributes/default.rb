@@ -8,5 +8,8 @@
 #
 
 
-default['docker-manage']['container']['names'] = ["redis"]
-default['docker-manage']['container']['data_bag'] = "docker_containers"
+default['docker-manage']['containers']['data_bags'] = {
+
+#						"docker_containers" = ["redis"]
+
+						}

@@ -1,0 +1,14 @@
+{
+  "id": "gitlab_data",
+  "image_load": false, 
+  "image_name": "10.0.0.10:5000/gitlab", 
+  "image_conf": {
+    "tag": "genezys",
+    "cmd_timeout": 900
+  },
+  "container_name": "gitlab_data",
+  "container_conf": {
+    "entrypoint": "/bin/true",
+    "cmd_timeout": 120
+  }
+}

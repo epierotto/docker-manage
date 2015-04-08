@@ -7,57 +7,66 @@
 # All rights reserved - Do Not Redistribute
 #
 
-# Check that docker is installed
+# Check that docker is installed and properly configured
 include_recipe "docker"
+include_recipe "docker-manage::_pull"
 
-# Checks that the image is loaded
-include_recipe "docker-manage::_load"
+data_bags = node['docker-manage']['containers']['data_bags']
 
-docker_containers = node['docker-manage']['container']['names']
-bag = "#{node['docker-manage']['container']['data_bag']}"
+data_bags.keys.each do |data_bag|
 
-docker_containers.each do |container|
+  data_bags[data_bag].each do |container|
 
-  # Load container config from data_bag
-  docker = data_bag_item( bag, container)
-  
+    # Load container config from data_bag
+    docker_container = data_bag_item( data_bag, container)
+
   # Load attributes for container configuration
-  image_name = "#{docker['image']['name']}"
-  image_tag = "#{docker['image']['tag']}"
-  container_name = "#{docker['container']['name']}"
-  container_dns = docker['container']['dns']
-  container_env = docker['container']['env']
-  container_ports = docker['container']['ports']
-  dir_volumes = docker['container']['volumes']
-  container_volumes = Array[]
-  
-  # Create directories for shared volumes if any
-  dir_volumes.each do |local,container|
-    directory local do
-      owner 'root'
-      group 'root'
-      mode '0766'
-      action :create
-      recursive true
-      not_if { Dir.exist? ("#{local}") }
+  container_name= "#{docker_container['container_name']}"
+
+    # Create directories for shared volumes if any         
+    if docker_container['container_conf']['volume']
+
+      docker_container['container_conf']['volume'].each do |volume|
+
+        host_dir, container_dir = volume.split(':')
+
+        unless host_dir.empty?
+     
+          directory host_dir do
+            owner 'root'
+            group 'root'
+            mode '0777'
+            action :create
+            recursive true
+          end
+    
+        end
+      end
+    else
+      log "No volumes found for container"
     end
-    container_volumes.push("#{local}:#{container}")
-  end.empty? and begin
-    log "No volumes found for container"
-  end
+    
+      image_name = "#{docker_container['image_name']}"
   
-  # Run the container exposing ports and sharing volumes
-  docker_container "#{image_name}" do
-    image "#{image_name}"
-    tag "#{image_tag}"
-    detach true
-    hostname "#{container_name}"
-    dns container_dns
-    env container_env
-    port container_ports
-    volume container_volumes
-    action :run
-    not_if "docker start #{image_name}"
-  end
-  
+      if docker_container['image_conf']['tag']
+        image_tag = "#{docker_container['image_conf']['tag']}"
+      else
+        image_tag = "latest"
+      end
+
+    # Run the container exposing ports and sharing volumes
+    docker_container "#{container_name}" do
+      image "#{image_name}:#{image_tag}"
+      container_name "#{container_name}"
+      # Load container config from data_bag
+      docker_container['container_conf'].each do |setting, value|
+        send(setting, value)
+      end
+
+      detach true
+      action :run
+      not_if "docker start #{container_name}"
+
+    end
+  end  
 end

@@ -39,12 +39,18 @@ Vagrant.configure('2') do |config|
           "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
         },
         "docker" => {
-          "version" => '1.4.1-3.el6'
+          "version" => '1.4.1-3.el6',
+	  "options" => '--insecure-registry 10.0.0.10:5000'
         },
         "docker-manage" => {
-          "container" => {
-            "names" => ["redis","rabbitmq1","sensu_server","sensu_api","uchiwa"],
-            "data_bag" => "docker_containers"
+          "containers" => {
+            "data_bags" => {
+		"docker_registry" => ["registry"],
+		"docker_chef" => ["chef-server"],
+		"docker_gitlab" => ["gitlab"]
+ 
+			
+		}
           }
         },
         "consul-manage" => {
@@ -67,202 +73,17 @@ Vagrant.configure('2') do |config|
       }
       chef.run_list = [
         "recipe[yum-epel]",
-        "recipe[consul]",
-        "recipe[consul::ui]",
-        "recipe[consul-manage::dns]",
-        "recipe[consul-manage::handlers]",
-        "recipe[consul-manage::_define]",
-        "recipe[consul-manage::_watch]",
-        "recipe[docker-manage::_build]",
-        "recipe[docker-manage::_run]"
-        ]
-    end
-  end
-
-  #### Docker2 definition
-  config.vm.define :docker2 do |docker2|
-    docker2.vm.box = 'opscode-centos-6.6'
-    docker2.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box"
-    docker2.vm.network :private_network, ip: '10.0.0.11'
-    docker2.vm.hostname = 'docker2'
-    config.vm.provider :virtualbox do |vb|
-      vb.customize ['modifyvm', :id,
-                        '--cpus', '2',
-                        '--memory', '1024',]
-        end
-    docker2.vm.provision :chef_solo do |chef|
-      chef.data_bags_path = "test/data_bags"
-      chef.log_level = :info #:debug
-      chef.json = {
-        "consul" => {
-          "serve_ui" => true,
-          "version" => "0.4.1",
-          "bind_interface" => "eth1",
-          "bootstrap_expect" => 2,
-          "retry_on_join" => true,
-          "advertise_addr" => "10.0.0.11",
-          "service_mode" => "cluster",
-          "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
-        },
-        "docker" => {
-          "version" => '1.4.1-3.el6'
-        },
-        "docker-manage" => {
-          "container" => {
-            "names" => ["redis","rabbitmq2","sensu_server","sensu_api","uchiwa"],
-            "data_bag" => "docker_containers"
-          }
-        },
-        "consul-manage" => {
-          "service" => {
-            "names" => ["redis2","rabbitmq","rabbitmq2","sensu_server","sensu_api","uchiwa"],
-            "data_bag" => "consul_services"
-          },
-	  "watch" => {
-            "service" => {
-                        "names" => ["sensu_api","sensu_server"],
-                        "data_bag" => "consul_watch_service"
-                }
-          },
-          "handlers" => {
-                "packages" => ["nc"],
-                "sources" => [],
-                "dir" => "/usr/local/consul/handlers/"
-          }
-        }
-      }
-      chef.run_list = [
-        "recipe[yum-epel]",
-        "recipe[consul]",
-        "recipe[consul::ui]",
-        "recipe[consul-manage::dns]",
-        "recipe[consul-manage::handlers]",
-        "recipe[consul-manage::_define]",
-        "recipe[consul-manage::_watch]",
-        "recipe[docker-manage::_build]",
-        "recipe[docker-manage::_run]"
-        ]
-    end
-  end
-
-  #### Docker3 definition
-  config.vm.define :docker3 do |docker3|
-    docker3.vm.box = 'opscode-centos-6.6'
-    docker3.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box"
-    docker3.vm.network :private_network, ip: '10.0.0.12'
-    docker3.vm.hostname = 'docker3'
-    config.vm.provider :virtualbox do |vb|
-      vb.customize ['modifyvm', :id,
-                        '--cpus', '2',
-                        '--memory', '1024',]
-        end
-    docker3.vm.provision :chef_solo do |chef|
-      chef.data_bags_path = "test/data_bags"
-      chef.log_level = :info #:debug
-      chef.json = {
-        "consul" => {
-          "serve_ui" => true,
-          "version" => "0.4.1",
-          "bind_interface" => "eth1",
-          "bootstrap_expect" => 2,
-          "retry_on_join" => true,
-          "advertise_addr" => "10.0.0.12",
-          "service_mode" => "cluster",
-          "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
-        },
-        "docker" => {
-          "version" => '1.4.1-3.el6'
-        },
-        "docker-manage" => {
-          "container" => {
-            "names" => ["redis","rabbitmq3","sensu_server","sensu_api","uchiwa"],
-            "data_bag" => "docker_containers"
-          }
-        },
-        "consul-manage" => {
-          "service" => {
-            "names" => ["redis3","rabbitmq","rabbitmq3","sensu_server","sensu_api","uchiwa"],
-            "data_bag" => "consul_services"
-          },
-	  "watch" => {
-            "service" => {
-                        "names" => ["sensu_api","sensu_server"],
-                        "data_bag" => "consul_watch_service"
-                }
-          },
-          "handlers" => {
-                "packages" => ["nc"],
-                "sources" => [],
-                "dir" => "/usr/local/consul/handlers/"
-          }
-        }
-      }
-      chef.run_list = [
-        "recipe[yum-epel]",
-        "recipe[consul]",
-        "recipe[consul::ui]",
-        "recipe[consul-manage::dns]",
-        "recipe[consul-manage::handlers]",
-        "recipe[consul-manage::_define]",
-        "recipe[consul-manage::_watch]",
-        "recipe[docker-manage::_build]",
-        "recipe[docker-manage::_run]"
-        ]
-    end
-  end
-
-
-  #### Docker4 definition
-  config.vm.define :docker4 do |docker4|
-    docker4.vm.box = 'opscode-centos-6.6'
-    docker4.vm.box_url = "http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box"
-    docker4.vm.network :private_network, ip: '10.0.0.13'
-    docker4.vm.hostname = 'docker4'
-    config.vm.provider :virtualbox do |vb|
-      vb.customize ['modifyvm', :id,
-                        '--cpus', '1',
-                        '--memory', '512',]
-        end
-    docker4.vm.provision :chef_solo do |chef|
-      chef.data_bags_path = "test/data_bags"
-      chef.log_level = :info #:debug
-      chef.json = {
-        "consul" => {
-          "serve_ui" => true,
-          "version" => "0.4.1",
-          "bind_interface" => "eth1",
-          "bootstrap_expect" => 2,
-          "retry_on_join" => true,
-          "advertise_addr" => "10.0.0.13",
-          "service_mode" => "cluster",
-          "servers" => ["10.0.0.10","10.0.0.11","10.0.0.12"]
-        },
-        "docker" => {
-          "version" => '1.4.1-3.el6'
-        },
-        "docker-manage" => {
-          "container" => {
-            "names" => ["client1","client2","client3"],
-            "data_bag" => "docker_containers"
-          }
-        },
-        "consul-manage" => {
-          "service" => {
-            "names" => [],
-            "data_bag" => "consul_services"
-          }
-        }
-      }
-      chef.run_list = [
-        "recipe[yum-epel]",
-        "recipe[consul]",
-        "recipe[consul::ui]",
-        "recipe[consul-manage::dns]",
+#        "recipe[consul]",
+#        "recipe[consul::ui]",
+#        "recipe[consul-manage::dns]",
 #        "recipe[consul-manage::handlers]",
-        "recipe[consul-manage::_define]",
-        "recipe[docker-manage::_build]",
+#        "recipe[consul-manage::_define]",
+#        "recipe[consul-manage::_watch]",
+#        "recipe[docker-manage::_build]",
         "recipe[docker-manage::_run]"
+#        "recipe[docker-manage::_pull]"
         ]
     end
   end
+
 end

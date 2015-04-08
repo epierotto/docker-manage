@@ -7,9 +7,10 @@
 # All rights reserved - Do Not Redistribute
 #
 
+$exe = "BINGO!!!"
 #include_recipe "docker-manage::_build"
 
-include_recipe "docker-manage::_run"
+#include_recipe "docker-manage::_run"
 
 #include_recipe "docker-manage::_remove"
 

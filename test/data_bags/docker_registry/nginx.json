@@ -1,0 +1,16 @@
+{
+  "id": "nginx",
+  "image_load": false, 
+  "image_name": "10.0.0.10:5000/nginx", 
+  "image_conf": {
+    "tag": "1.7.1",
+    "cmd_timeout": 900
+  },
+  "container_name": "nginx",
+  "container_conf": {
+    "link": ["registry:registry"],
+    "port": ["8080:80","443:443"],
+    "cmd_timeout": 120,
+    "volume": ["/export/oso/registry/nginx/conf.d:/etc/nginx/conf.d"]
+  }
+}

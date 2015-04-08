@@ -1,0 +1,16 @@
+{
+  "id": "registry",
+  "image_load": false, 
+  "image_name": "registry", 
+  "image_conf": {
+    "tag": "0.9.1",
+    "cmd_timeout": 900
+  },
+  "container_name": "registry",
+  "container_conf": {
+    "env": ["STORAGE_PATH=/repo","SETTINGS_FLAVOR=local"],
+    "port": ["5000:5000"],
+    "cmd_timeout": 120,
+    "volume": ["/vagrant/export/oso/registry/repo:/repo"]
+  }
+}
