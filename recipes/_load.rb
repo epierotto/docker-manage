@@ -7,42 +7,47 @@
 # All rights reserved - Do Not Redistribute
 #
 
-docker_containers = node['docker-manage']['container']['names']
-bag = "#{node['docker-manage']['container']['data_bag']}"
 
-docker_containers.each do |container|
+data_bags = node['docker-manage']['containers']['data_bags']
 
-  # Load container config from data_bag
-  docker = data_bag_item( bag, container)
+data_bags.keys.each do |data_bag|
+
+  data_bags[data_bag].each do |container|
+
+    # Load container config from data_bag
+    docker_container = data_bag_item( data_bag, container)
+
+    if docker_container['image_load'] == true
+
+      image_name = "#{docker_container['image_name']}"
+      source = "#{docker_container['source']}"
+      input = "#{docker_container['input']}"
+      checksum = "#{docker_container['checksum']}"
+     
+      if docker_container['image_conf']['tag']
+        image_tag = "#{docker_container['image_conf']['tag']}"
+      else
+        image_tag = "latest"
+      end
+
+#      remote_file "#{Chef::Config[:file_cache_path]}/#{image_name}.tar" do
+#        source source
+#        action :create
+#        checksum checksum
+#        not_if { ::File.exists?("#{Chef::Config[:file_cache_path]}/#{image_name}.tar") }
+#      end
+
+      # Load the image from tar
+      docker_image "#{image_name}" do
+        #input "#{Chef::Config[:file_cache_path]}/#{image_name}.tar"
+        input "#{input}"
+        action :load
+        not_if "docker history #{image_name}:#{image_tag}"
+      end
   
-  image_dir = "#{docker['image']['dir']}"
-  image_name = "#{docker['image']['name']}"
-  image_tag = "#{docker['image']['tag']}"
-  image_source = "#{docker['image']['source']}"
-  image_checksum = "#{docker['image']['checksum']}"
-  
-  # Create a folder to store the image
-  directory image_dir do
-    owner 'root'
-    group 'root'
-    mode '0755'
-    action :create
-    recursive true
-    not_if { Dir.exist? ("#{image_dir}") }
+    end
+
   end
-  
-  # Get the image.tar from a remote or local source:
-  remote_file "#{image_dir}/#{image_name}.tar" do
-    source "#{image_source}"
-    checksum "#{image_checksum}"
-    not_if { File.exists?("#{image_dir}/#{image_name}.tar") }
-  end
-  
-  # Load the image
-  docker_image "#{image_name}" do
-    input "#{image_dir}/#{image_name}.tar"
-    action :load
-  #  only_if { File.exists?(aspnet_regiis) }
-  end
- 
+
 end 
+

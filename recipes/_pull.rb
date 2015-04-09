@@ -53,7 +53,7 @@ data_bags.keys.each do |data_bag|
         end
   
         action :pull
-        not_if "docker history #{image_name}:#{image_tag}"
+        #not_if "docker history #{image_name}:#{image_tag}"
   
       end
   
