@@ -20,9 +20,8 @@ data_bags.keys.each do |data_bag|
     if docker_container['image_load'] == true
 
       image_name = "#{docker_container['image_name']}"
-      source = "#{docker_container['source']}"
-      input = "#{docker_container['input']}"
-      checksum = "#{docker_container['checksum']}"
+      input = "#{docker_container['image_conf']['input']}"
+      checksum = "#{docker_container['image_conf']['checksum']}"
      
       if docker_container['image_conf']['tag']
         image_tag = "#{docker_container['image_conf']['tag']}"
@@ -30,17 +29,9 @@ data_bags.keys.each do |data_bag|
         image_tag = "latest"
       end
 
-#      remote_file "#{Chef::Config[:file_cache_path]}/#{image_name}.tar" do
-#        source source
-#        action :create
-#        checksum checksum
-#        not_if { ::File.exists?("#{Chef::Config[:file_cache_path]}/#{image_name}.tar") }
-#      end
-
-      # Load the image from tar
+      # Load the image from given tar
       docker_image "#{image_name}" do
-        #input "#{Chef::Config[:file_cache_path]}/#{image_name}.tar"
-        input "#{input}"
+        input input
         action :load
         not_if "docker history #{image_name}:#{image_tag}"
       end

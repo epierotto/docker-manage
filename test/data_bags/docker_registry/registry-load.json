@@ -1,0 +1,18 @@
+{
+  "id": "registry-load",
+  "image_load": true, 
+  "image_name": "registry", 
+  "image_conf": {
+    "input": "/root/registry.tar",
+    "checksum": "045f8f5f62ddbdad6895848c6c277c242444eb9b207c7781713b89e1a5ae73b1",
+    "tag": "0.9.1",
+    "cmd_timeout": 900
+  },
+  "container_name": "registry",
+  "container_conf": {
+    "env": ["STORAGE_PATH=/repo","SETTINGS_FLAVOR=local"],
+    "port": ["5000:5000"],
+    "cmd_timeout": 120,
+    "volume": ["/vagrant/export/oso/registry/repo:/repo"]
+  }
+}

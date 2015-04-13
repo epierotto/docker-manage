@@ -10,6 +10,7 @@
 # Check that docker is installed and properly configured
 include_recipe "docker"
 include_recipe "docker-manage::_pull"
+include_recipe "docker-manage::_load"
 
 data_bags = node['docker-manage']['containers']['data_bags']
 
