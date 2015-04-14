@@ -42,7 +42,7 @@ Vagrant.configure('2') do |config|
         }
       }
       chef.run_list = [
-        "recipe[yum-epel]",
+#        "recipe[yum-epel]",
 #        "recipe[docker-manage::_build]",
         "recipe[docker-manage::_run]"
 #        "recipe[docker-manage::_pull]"
