@@ -16,25 +16,23 @@ data_bags = node['docker-manage']['containers']['data_bags']
 
 data_bags.keys.each do |data_bag|
 
-  data_bags[data_bag].each do |container|
+    data_bags[data_bag].each do |container|
 
-    # Load container config from data_bag
-    docker_container = data_bag_item( data_bag, container)
-    
-    image_name = "#{docker_container['image_name']}"
+        # Load container config from data_bag
+        docker_container = data_bag_item( data_bag, container)
 
-    if docker_container['image_conf']['tag']
-      image_tag = "#{docker_container['image_conf']['tag']}"
-    else
-      image_tag = "latest"
-    end
-   
+        image_name = "#{docker_container['image_name']}"
+
+        if docker_container['image_conf']['tag']
+            image_tag = "#{docker_container['image_conf']['tag']}"
+        else
+            image_tag = "latest"
+        end
 
     if docker_container['image_load'] == true
 
       # Load the image from given tar
       input = "#{docker_container['image_conf']['input']}"
-      
       docker_image "#{image_name}" do
         input input
         action :load

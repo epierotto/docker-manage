@@ -37,15 +37,16 @@ Vagrant.configure('2') do |config|
 		"docker_registry" => ["registry"]
 #		"docker_chef" => ["chef-server"],
 #		"docker_gitlab" => ["gitlab"]
-		}
+		},
+	  "backup" => ['registry']
           }
         }
       }
       chef.run_list = [
 #        "recipe[yum-epel]",
 #        "recipe[docker-manage::_build]",
-        "recipe[docker-manage::_run]"
-#        "recipe[docker-manage::_pull]"
+        "recipe[docker-manage::_run]",
+        "recipe[docker-manage::_backup]"
         ]
     end
   end

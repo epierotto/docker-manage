@@ -10,7 +10,8 @@
 include_recipe "docker"
 
 docker_containers = node['docker-manage']['container']['names']
-bag = "#{node['docker-manage']['container']['data_bag']}"
+#bag = "#{node['docker-manage']['container']['data_bag']}"
+bag = node['docker-manage']['container']['data_bag']
 
 docker_containers.each do |container|
  
