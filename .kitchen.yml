@@ -1,15 +1,44 @@
 ---
 driver:
   name: vagrant
+  network:
+  - ["private_network", { ip: "10.0.0.10" }]
+  customize:
+    memory: 1024
+    cpus: 2
 
 provisioner:
   name: chef_solo
+  require_chef_omnibus: 11.4.0
 
 platforms:
-  - name: ubuntu-12.04
-  - name: centos-6.4
+- name: centos-6.6
+  driver:
+    box: opscode-centos-6.6
+    box_url: http://opscode-vm-bento.s3.amazonaws.com/vagrant/virtualbox/opscode_centos-6.6_chef-provisionerless.box
 
 suites:
   - name: default
+    data_bags_path: "test/integration/data_bags"
     run_list:
+      - recipe[docker-manage::_run]
     attributes:
+      docker:
+        version: 1.5.0-1.el6
+        options: --insecure-registry 10.0.0.10:5000
+        
+  - name: base 
+    data_bags_path: "test/integration/data_bags"
+    run_list:
+      - recipe[docker-manage::_run]
+    attributes:
+      docker:
+        version: 1.5.0-1.el6
+        options: --insecure-registry 10.0.0.10:5000
+
+      docker-manage:
+          containers:
+            data_bags:
+              docker_registry:
+                - 'registry'
+

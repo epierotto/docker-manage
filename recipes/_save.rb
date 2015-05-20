@@ -1,11 +1,8 @@
 #
 # Cookbook Name:: docker-manage
-# Recipe:: _build
+# Recipe:: _save
 #
-# Copyright (C) 2015 Exequiel Pierotto <epierotto@abast.es>
-#
-# All rights reserved - Do Not Redistribute
-#
+# Copyright (c) 2015 Exequiel Pierotto, All Rights Reserved.
 
 include_recipe 'docker'
 
@@ -16,9 +13,7 @@ data_bags.keys.each do |data_bag|
     # Load container config from data_bag
     docker_container = data_bag_item(data_bag, container)
 
-    build_dir = docker_container['image_build']['dir']
-    build_timeout = docker_container['image_build']['timeout']
-    build_repository = docker_container['image_build']['repository']
+    save_dir = docker_container['image_save']['dir']
     image_name = docker_container['image_name']
 
     if defined?(docker_container['image_conf']['tag'])
@@ -27,26 +22,23 @@ data_bags.keys.each do |data_bag|
       image_tag = 'latest'
     end
 
-    # Create the folder to build and store the image
-    directory build_dir do
+    directory path do
       mode '0755'
       action :create
       recursive true
-      not_if { Dir.exist?(build_dir) }
+      not_if { Dir.exist?(path) }
     end
 
-    package 'git'
-
-    git build_dir do
-      repository build_repository
-      action :checkout
+    if File.exist?("#{save_dir}/#{image_name}.tar")
+      str = '*' * 100
+      Chef::Log.warn("\n#{str}\n*\n* WARNING!!\n* NOT SAVING \"#{image_name}.tar\" DUE TO \"#{save_dir}/#{image_name}.tar\" ALREADY EXIST.\n*\n#{str}")
     end
 
     docker_image image_name do
+      destination "#{save_dir}/#{image_name}.tar"
       tag image_tag
-      source build_dir
-      cmd_timeout build_timeout
-      action :build_if_missing
+      action :save
+      not_if { File.exist?("#{save_dir}/#{image_name}.tar") }
     end
   end
 end

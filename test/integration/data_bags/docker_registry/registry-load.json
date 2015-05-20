@@ -1,0 +1,26 @@
+{
+"id": "registry-load",
+  "image_load": true,
+  "image_name": "registry",
+  "image_build": {
+    "dir": "",
+    "timeout": "",
+    "repository": ""
+  },
+  "image_save": {
+    "dir": ""
+  },
+  "image_conf": {
+    "input": "/root/registry.tar",
+    "tag": "0.9.1",
+    "cmd_timeout": 1200
+  },
+  "container_name": "registry",
+  "container_conf": {
+    "env": ["STORAGE_PATH=/registry","SETTINGS_FLAVOR=local"],
+    "port": ["5000:5000"],
+    "init_type": false,
+    "cmd_timeout": 120,
+    "volume": ["/oso/data/registry:/registry"]
+  }
+}

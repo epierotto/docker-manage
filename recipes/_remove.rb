@@ -2,39 +2,22 @@
 # Cookbook Name:: docker-manage
 # Recipe:: _remove
 #
-# Copyright (C) 2015 YOUR_NAME
+# Copyright (C) 2015 Exequiel Pierotto <epierotto@abast.es>
 #
 # All rights reserved - Do Not Redistribute
 #
 
-docker_containers = node['docker-manage']['container']['names']
-bag = "#{node['docker-manage']['container']['data_bag']}"
+docker_containers = node['docker-manage']['containers']['remove']
 
 docker_containers.each do |container|
+  # Remove the container after stopping it
+  str = '*' * 50
+  Chef::Log.info("\n#{str}\n*\n* WARNING!!\n* REMOVING \"#{container}\" CONTAINER.\n*\n#{str}")
 
-  # Load container config from data_bag
-  docker = data_bag_item( bag, container)
-  
-  image_name = "#{docker['image']['name']}"
-  
-  # Remove the container and image after stopping it
-  
-  str = "*" * 50
-  Chef::Log.info("\n#{str}\n*\n* WARNING!!\n* REMOVING \"#{image_name}\" CONTAINER.\n*\n#{str}")
-  
-  
-  docker_container "#{image_name}" do
+  docker_container container do
     force true
     action :remove
-    only_if "docker stop #{image_name}"
-    notifies :remove, "docker_image[#{image_name}]", :immediately
+    only_if "docker stop #{container}"
+    notifies :remove, "docker_image[#{container}]", :immediately
   end
-  
-  
-  docker_image "#{image_name}" do
-    force true
-    action :nothing
-    no_prune false
-  end
-
 end

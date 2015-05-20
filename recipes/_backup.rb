@@ -7,35 +7,40 @@
 
 containers = node['docker-manage']['containers']['backup']
 
-containers.each.any? do |container|
-
-   # Save current timestamp
+containers.each.key.any? do |container|
+  # Save current timestamp
   timestamp = Time.new.strftime('%Y%m%d%H')
+  repository = container['repository']
 
-  repository = '10.0.0.10:5000'
+  if defined?(container['tag'])
+    tag = container['tag']
+  else
+    tag = 'latest'
+  end
 
-  tag = 'oso'
+  if defined?(container['repository'])
+    image_name = "#{repository}/#{container}"
+  else
+    image_name = container
+  end
 
-  if !system("docker history #{repository}/#{container}:#{timestamp}")
+  tags = [timestamp, tag]
 
-    tags = [timestamp, tag]
+  tags.each do |t|
+    # Commit container changes
+    docker_container container do
+      repository image_name
+      tag t
+      action :commit
+      not_if "docker history #{repository}/#{container}:#{timestamp}"
+    end
 
-    tags.each do |t|
-
-       # Commit container changes
-      docker_container container do
-	repository "#{repository}/#{container}"
-	tag t
-	action :commit
-      end
-
-       # Push the image with the new tag
-      docker_image container do
-	image_name "#{repository}/#{container}"
-	tag t
-        action :push
-      end
-
+    # Push the image with the new tag
+    docker_image container do
+      image_name image_name
+      tag t
+      action :push
+      not_if "docker history #{repository}/#{container}:#{timestamp}"
     end
   end
 end
